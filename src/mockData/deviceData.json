@@ -1,0 +1,9 @@
+{
+    "devices": [
+      { "id": 1, "name": "Device 1", "status": "Active", "powerConsumption": "50kW" },
+      { "id": 2, "name": "Device 2", "status": "Inactive", "powerConsumption": "0kW" },
+      { "id": 3, "name": "Device 3", "status": "Active", "powerConsumption": "75kW" },
+      { "id": 4, "name": "Device 4", "status": "Inactive", "powerConsumption": "0kW" }
+    ]
+  }
+  
