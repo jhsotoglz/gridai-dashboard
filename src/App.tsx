@@ -3,12 +3,59 @@ import React, { useState } from 'react';
 import './App.css';
 import LineChart from './components/LineChart';
 import DeviceTable from './components/DeviceTable';
+import { Mosaic, MosaicWindow, MosaicNode } from 'react-mosaic-component';
+import 'react-mosaic-component/react-mosaic-component.css';
+
+const generateRandomId = () => String(Math.floor(Math.random() * 1000));
 
 function App() {
-  const [activeTab, setActiveTab] = useState<string>('lineChart'); // This state keeps track of what tab is currently displayed
+  const [currentNode, setCurrentNode] = useState<MosaicNode<string> | null>({
+    direction: 'row',
+    first: '1',  // Line Chart
+    second: '2', // Device Table
+    splitPercentage: 50,
+  });
 
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab); // This switches between lineChart and deviceTable
+  // State to keep track of widget types
+  const [widgetTypes, setWidgetTypes] = useState<{ [key: string]: string }>({
+    '1': 'lineChart',
+    '2': 'deviceTable',
+  });
+
+  const addWidget = (type: 'lineChart' | 'deviceTable') => {
+    const newId = generateRandomId();
+    const newWidgetNode: MosaicNode<string> = newId;
+
+    // Add the new widget type to the state
+    setWidgetTypes(prevTypes => ({
+      ...prevTypes,
+      [newId]: type, // Associate the new ID with its widget type
+    }));
+
+    // Update the current layout with the new widget
+    setCurrentNode(prevState => {
+      if (!prevState) {
+        return newWidgetNode;
+      }
+
+      return {
+        direction: 'row',
+        first: prevState,
+        second: newWidgetNode,
+        splitPercentage: 50,
+      };
+    });
+  };
+
+  const renderTile = (id: string) => {
+    // Use the widgetTypes state to decide which component to render
+    if (widgetTypes[id] === 'lineChart') {
+      return <LineChart />;
+    }
+    if (widgetTypes[id] === 'deviceTable') {
+      return <DeviceTable />;
+    }
+    return null; 
   };
 
   return (
@@ -16,29 +63,24 @@ function App() {
       <header className="App-header">
         <h1>Power Usage Dashboard</h1>
 
-        {/* Tab Navigation */}
-        <div className="tabs">
-          <button 
-            // If activeTab is lineChart, then set it to active. Otherwise apply no class ('')
-            className={activeTab === 'lineChart' ? 'active' : ''}
-            // When clicked, it switches the activeTab to lineChart
-            onClick={() => handleTabClick('lineChart')}
-          >
-            Line Chart
-          </button>
-          <button 
-            // If activeTab is deviceTable applies the active class to device table. Otherwise apply no class ('')
-            className={activeTab === 'deviceTable' ? 'active' : ''}
-             // When clicked, it switches the activeTab to deviceTable
-            onClick={() => handleTabClick('deviceTable')}
-          >
-            Device Table
-          </button>
+        {/* Buttons to Add Widgets */}
+        <div>
+          <button className="add-button" onClick={() => addWidget('lineChart')}>Add Line Chart</button>
+          <button className="add-button" onClick={() => addWidget('deviceTable')}>Add Device Table</button>
         </div>
 
-        {/* Conditional Rendering Based on Active Tab */}
-        {activeTab === 'lineChart' && <LineChart />}
-        {activeTab === 'deviceTable' && <DeviceTable />}
+        {/* Mosaic Layout */}
+        <div style={{ height: '80vh', marginTop: '20px' }}>
+          <Mosaic<string>
+            renderTile={(id, path) => (
+              <MosaicWindow<string> path={path} title={widgetTypes[id] === 'lineChart' ? 'Line Chart' : 'Device Table'}>
+                {renderTile(id)}
+              </MosaicWindow>
+            )}
+            value={currentNode}
+            onChange={setCurrentNode}
+          />
+        </div>
       </header>
     </div>
   );

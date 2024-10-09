@@ -5,7 +5,7 @@
   margin-bottom: 20px;
 }
 
-button {
+.add-button {
   padding: 10px 20px;
   border: none;
   background-color: #4CAF50;
@@ -15,19 +15,35 @@ button {
   margin-right: 10px;
 }
 
-button.active {
+.add-button.active {
   background-color: #3e8e41;
 }
 
-button:hover {
+.add-button:hover {
   background-color: #45a049;
 }
 
-button:focus {
+.add-button:focus {
   outline: none;
 }
+
 
 .chart-container {
   max-width: 800px; 
   margin: 0 auto;
 }
+
+.mosaic-tile {
+  background-color: #f9f9f9;
+}
+
+.mosaic-window-toolbar {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.App-header {
+  text-align: center;
+  padding: 10px;
+}
+
